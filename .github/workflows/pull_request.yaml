@@ -1,16 +1,40 @@
 name: build
 on:
-  pull_request
+  # pull_request
+  push
 jobs:
-  checkov-job:
+  
+  sonarqube-scan:
+    name: SonarQube Scan
     runs-on: ubuntu-latest
-    name: checkov-action
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
+      - uses: actions/checkout@v2
         with:
-          directory: terraform/
+          fetch-depth: 0
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      - uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+ 
+  # Run dev deployment workflow
+
+
+
+  # checkov-job:
+  #   runs-on: ubuntu-latest
+  #   name: checkov-action
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
+
+  #     - name: Run Checkov action
+  #       id: checkov
+  #       uses: bridgecrewio/checkov-action@master
+  #       with:
+  #         directory: terraform/
