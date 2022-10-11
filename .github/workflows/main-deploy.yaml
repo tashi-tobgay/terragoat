@@ -2,7 +2,7 @@ name: main deployment
 on:
   push:
     branches:
-    - master
+    - main
 
 jobs:
   sonarqube-scan:
